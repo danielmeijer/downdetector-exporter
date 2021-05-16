@@ -14,3 +14,7 @@
 ## Usage
 
 Copy .env.dist -> .env, set your url and execute `docker-compose up -d`.
+
+## Grafana
+
+JSON Model provided in ./downdetector.json
