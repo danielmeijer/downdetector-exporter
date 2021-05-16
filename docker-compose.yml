@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+    downdetector-exporter:
+        build: .
+        ports: 
+            - '80:8000'
+        environment: 
+            - downdetector_url=${downdetector_url}
