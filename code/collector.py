@@ -31,9 +31,11 @@ class CustomCollector(object):
         ### STATUS ###
 
         if parsed_json["status"] == "success": 
-            downdetector_current_status="0"           
-        else: 
+            downdetector_current_status="0"  
+        elif parsed_json["status"] == "warning":
             downdetector_current_status="1"
+        else: 
+            downdetector_current_status="2"
 
         downdetector_status = GaugeMetricFamily("downdetector_status", 'Shows if downdetector consider the service down.')
         downdetector_status.add_metric(["status"], downdetector_current_status)
