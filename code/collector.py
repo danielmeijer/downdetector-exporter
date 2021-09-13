@@ -15,16 +15,20 @@ class CustomCollector(object):
         html = requests.get(os.environ['downdetector_url'])
         soup = BeautifulSoup(html.text, 'html.parser')
 
-        raw_output=soup.find('div', {"class" : "popover-container justify-content-center p-relative"}).script.find(text=re.compile(".*translated_reports.*"))
+        # GET SCRIPT WHERE DATA IS LOCATED
+        raw_output = soup.find('script', text = re.compile('window.DD.chartTranlations*'), attrs = {'type' : 'text/javascript'})
+        raw_output = raw_output.extract
 
-        json = raw_output.split('var data = ', 1)
-        json = json[1]
-
-        json = json.split("$(", 1) # Remove function part
-        json = json[0]
-        json = json.replace("\'", "\"") # replace single quotes in string for double quotes
-
-        parsed_json=hjson.loads(json)
+        # CLEAR VARIABLE TO OUTPUT ONLY JSON
+        downdetector_json = str(raw_output).split("window.DD.currentServiceProperties =")
+        downdetector_json = downdetector_json[1]
+        # REMOVE SCRIPT TAG
+        downdetector_json = str(downdetector_json).split("</script>")
+        downdetector_json = downdetector_json[0]
+        # CLEAR JSON
+        downdetector_json = downdetector_json.replace("\'", "\"") # replace single quotes in string for double quotes (fixes mixed quotes in output)
+        
+        parsed_json=hjson.loads(downdetector_json)
 
         print("Downdetector status for : "+ os.environ['downdetector_url'] + " is " + parsed_json["status"])
 
